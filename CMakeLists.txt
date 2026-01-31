@@ -23,17 +23,26 @@ pico_sdk_init()
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/lcd_i2c.cpp
+    src/usb_descriptors.c
+)
+
+# インクルードディレクトリ（tusb_config.h用）
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Pico 標準ライブラリをリンク
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib
     hardware_i2c
+    tinyusb_device
+    tinyusb_board
 )
 
-# USB 出力を有効化（デバッグ用）
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+# UART出力を有効化（USB HIDと競合するためUSB stdioは無効）
+pico_enable_stdio_usb(${PROJECT_NAME} 0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)
 
 # UF2 ファイル等の生成
 pico_add_extra_outputs(${PROJECT_NAME})
+

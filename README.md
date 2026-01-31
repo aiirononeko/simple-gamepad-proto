@@ -1,86 +1,70 @@
 # Simple Gamepad Proto
 
-Raspberry Pi Pico を使用した C++ 開発プロジェクト
+Raspberry Pi Pico を使用した **DualShock 4互換 USB HID Gamepad** プロジェクト
+
+## 特徴
+
+- **DS4互換モード**: Sony DualShock 4として認識される（VID: 0x054C, PID: 0x05C4）
+- **Gamepadtester対応**: PlayStationコントローラーUIが表示される
+- **2x2ボタンマトリクス×2**: ABXY + D-pad
+
+## ボタンマッピング
+
+| 物理ボタン | DS4表示 | GamepadtesterのIndex |
+|-----------|--------|---------------------|
+| A         | ✕      | B1                  |
+| B         | ○      | B2                  |
+| X         | □      | B0                  |
+| Y         | △      | B3                  |
+| D-pad     | Hat    | 方向キー表示        |
 
 ## 必要な環境
 
-- **Raspberry Pi Pico SDK** (pico-sdk)
-- **ARM GCC コンパイラ** (arm-none-eabi-gcc)
-- **CMake** (3.13以上)
-- **Make** または **Ninja**
-
-## セットアップ
-
-### 1. Pico SDK のインストール
-
-```bash
-# SDK をクローン
-cd ~
-git clone https://github.com/raspberrypi/pico-sdk.git
-cd pico-sdk
-git submodule update --init
-
-# 環境変数を設定（.bashrc や .zshrc に追加）
-export PICO_SDK_PATH=~/pico-sdk
-```
-
-### 2. ツールチェーンのインストール
-
-```bash
-# Ubuntu/Debian の場合
-sudo apt update
-sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
-```
+- Raspberry Pi Pico SDK (pico-sdk)
+- ARM GCC コンパイラ (arm-none-eabi-gcc)
+- CMake (3.13以上)
 
 ## ビルド方法
 
 ```bash
-# ビルドディレクトリを作成
-mkdir build
-cd build
-
-# CMake を実行
+mkdir -p build && cd build
 cmake ..
-
-# ビルド
 make -j$(nproc)
 ```
 
 ## 書き込み方法
 
 1. Pico の **BOOTSEL** ボタンを押しながら USB ケーブルを接続
-2. Pico がマスストレージデバイスとして認識される
-3. `build/simple-gamepad-proto.uf2` を Pico ドライブにコピー
-4. 自動的に再起動して実行開始
+2. `build/simple-gamepad-proto.uf2` を RPI-RP2 ドライブにコピー
+3. 自動的に再起動
 
-```bash
-# Linux の場合（Pico が /media/<user>/RPI-RP2 にマウントされている場合）
-cp build/simple-gamepad-proto.uf2 /media/$USER/RPI-RP2/
-```
+## 動作確認
+
+https://gamepadtester.net/ にアクセスして、PlayStation コントローラーUIで動作確認できます。
 
 ## プロジェクト構成
 
 ```
 simple-gamepad-proto/
-├── CMakeLists.txt          # メインの CMake 設定
-├── pico_sdk_import.cmake   # Pico SDK インポートスクリプト
+├── CMakeLists.txt
 ├── src/
-│   └── main.cpp            # メインプログラム
-└── README.md               # このファイル
+│   ├── main.cpp            # メインプログラム（DS4互換）
+│   ├── usb_descriptors.c   # USB HID Descriptor
+│   ├── tusb_config.h       # TinyUSB設定
+│   ├── lcd_i2c.cpp/h       # LCD制御
+└── schematics/             # 回路図
 ```
 
-## デバッグ（シリアル出力）
+## デバッグ（UART出力）
 
-USB シリアルを使用してデバッグ出力を確認できます：
+USB HIDを使用しているため、デバッグ出力はUART経由です：
 
 ```bash
-# minicom を使用する場合
-sudo minicom -b 115200 -D /dev/ttyACM0
-
-# screen を使用する場合
-sudo screen /dev/ttyACM0 115200
+# GP0(TX), GP1(RX) をUSB-シリアル変換器に接続
+sudo minicom -b 115200 -D /dev/ttyUSB0
 ```
 
 ## ライセンス
 
 MIT License
+
