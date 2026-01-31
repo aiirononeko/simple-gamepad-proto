@@ -1,0 +1,27 @@
+# Build directory
+build/
+
+# IDE settings
+.vscode/
+.idea/
+
+# CMake cache files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Compiled files
+*.o
+*.a
+*.elf
+*.bin
+*.hex
+*.uf2
+*.dis
+*.map
+
+# Backup files
+*~
+*.swp
+*.bak
