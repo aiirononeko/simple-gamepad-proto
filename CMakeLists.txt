@@ -22,11 +22,13 @@ pico_sdk_init()
 # ソースファイルを追加
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/lcd_i2c.cpp
 )
 
 # Pico 標準ライブラリをリンク
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib
+    hardware_i2c
 )
 
 # USB 出力を有効化（デバッグ用）
