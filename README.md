@@ -54,12 +54,3 @@ simple-gamepad-proto/
 │   ├── lcd_i2c.cpp/h       # LCD制御
 └── schematics/             # 回路図
 ```
-
-## デバッグ（UART出力）
-
-USB HIDを使用しているため、デバッグ出力はUART経由です：
-
-```bash
-# GP0(TX), GP1(RX) をUSB-シリアル変換器に接続
-sudo minicom -b 115200 -D /dev/ttyUSB0
-```
