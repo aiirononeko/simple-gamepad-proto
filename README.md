@@ -1,22 +1,22 @@
 # Simple Gamepad Proto
 
-Raspberry Pi Pico を使用した **DualShock 4互換 USB HID Gamepad** プロジェクト
+Raspberry Pi Pico を使用した **USB HID Gamepad** プロジェクト
 
 ## 特徴
 
-- **DS4互換モード**: Sony DualShock 4として認識される（VID: 0x054C, PID: 0x05C4）
-- **Gamepadtester対応**: PlayStationコントローラーUIが表示される
-- **2x2ボタンマトリクス×2**: ABXY + D-pad
+- **汎用ゲームパッド**: 標準 HID Gamepad として認識される
+- **2×2ボタンマトリクス×2**: ABXY + D-pad（計8ボタン）
+- **最小構成**: 約120行のファームウェアコード
 
 ## ボタンマッピング
 
-| 物理ボタン | DS4表示 | GamepadtesterのIndex |
-|-----------|--------|---------------------|
-| A         | ✕      | B1                  |
-| B         | ○      | B2                  |
-| X         | □      | B0                  |
-| Y         | △      | B3                  |
-| D-pad     | Hat    | 方向キー表示        |
+| 物理ボタン | Gamepad Index |
+|-----------|--------------|
+| A         | Button 1     |
+| B         | Button 2     |
+| X         | Button 3     |
+| Y         | Button 4     |
+| D-pad     | Hat Switch   |
 
 ## 必要な環境
 
@@ -27,6 +27,7 @@ Raspberry Pi Pico を使用した **DualShock 4互換 USB HID Gamepad** プロ�
 ## ビルド方法
 
 ```bash
+export PICO_SDK_PATH=/path/to/pico-sdk
 mkdir -p build && cd build
 cmake ..
 make -j$(nproc)
@@ -40,7 +41,7 @@ make -j$(nproc)
 
 ## 動作確認
 
-https://gamepadtester.net/ にアクセスして、PlayStation コントローラーUIで動作確認できます。
+https://gamepadtester.net/ にアクセスして動作確認できます。
 
 ## プロジェクト構成
 
@@ -48,9 +49,8 @@ https://gamepadtester.net/ にアクセスして、PlayStation コントロー�
 simple-gamepad-proto/
 ├── CMakeLists.txt
 ├── src/
-│   ├── main.cpp            # メインプログラム（DS4互換）
+│   ├── main.cpp            # メインプログラム（マトリクススキャン + HID送信）
 │   ├── usb_descriptors.c   # USB HID Descriptor
-│   ├── tusb_config.h       # TinyUSB設定
-│   ├── lcd_i2c.cpp/h       # LCD制御
+│   └── tusb_config.h       # TinyUSB設定
 └── schematics/             # 回路図
 ```
